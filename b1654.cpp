@@ -5,29 +5,31 @@ using namespace std;
 
 int main()
 {
-    int req, amount;
-    cin >> amount >> req;
-    vector<int> lengths(amount);
+    int n, k;
+    cin >> k >> n;
+    vector<int> lengths(k);
 
-    for (int i = 0; i < amount; i++)
+    for (int i = 0; i < k; i++)
         cin >> lengths[i];
-    if (lengths.empty())
-        return 0;
-    int maxLength = *max_element(lengths.begin(), lengths.end());
-    for (int i = maxLength; i > 0; i--)
+    long long maxLength = *max_element(lengths.begin(), lengths.end());
+    long long minLength = 1;
+    int result = 1;
+    while (minLength <= maxLength)
     {
-        int cnt = 0;
-        for (int j : lengths)
-        {
-            cnt += j / i;
-            if (cnt >= req)
-                break;
-        }
 
-        if (cnt == req)
+        long long mid = (minLength + maxLength) / 2;
+        int cnt = 0;
+        for (int i : lengths)
+            cnt += i / mid;
+
+        if (cnt >= n)
         {
-            cout << i;
-            break;
+            minLength = mid + 1;
+            if (mid > result)
+                result = mid;
         }
+        else
+            maxLength = mid - 1;
     }
+    cout << result;
 }
