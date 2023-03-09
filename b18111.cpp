@@ -1,13 +1,15 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <limits>
 using namespace std;
 
 struct Result
 {
     int height = 0;
-    int time = 0;
+    int time = numeric_limits<int>::max();
 };
+
 Result Flattening(vector<vector<int>> land, int B, int average, int upper, int lower);
 void getUpperLowerValues(vector<vector<int>> land, int average, int &upper, int &lower);
 int main()
@@ -17,23 +19,33 @@ int main()
     long long B;
     cin >> N >> M >> B;
     vector<vector<int>> land(N, vector<int>(M));
-
+    int maxVal = 0;
+    int minVal = 300;
     int sum = 0;
     for (int i = 0; i < N; i++)
         for (int j = 0; j < M; j++)
         {
             cin >> land[i][j];
             sum += land[i][j];
+            if (land[i][j] > maxVal)
+                maxVal = land[i][j];
+            else if (land[i][j] < minVal)
+                minVal = land[i][j];
         }
-    int average = sum / (N * M);
-    cout << average << endl;
-    Result result1 = Flattening(land, B, average, upper, lower);
-    average++;
-    Result result2 = Flattening(land, B, average, upper, lower);
-    if (result1.time >= result2.time)
-        cout << result2.time << " " << result2.height << endl;
-    else
-        cout << result1.time << " " << result1.height << endl;
+    Result ans;
+    for (int i = minVal; i <= maxVal; i++)
+    {
+        Result temp = Flattening(land, B, i, upper, lower);
+        if (temp.time < ans.time)
+        {
+            ans.time = temp.time;
+            ans.height = temp.height;
+        }
+        else if (temp.time == ans.time)
+            ans.height = ans.height < temp.height ? temp.height : ans.height;
+    }
+
+    cout << ans.time << " " << ans.height << endl;
 }
 void getUpperLowerValues(vector<vector<int>> land, int average, int &upper, int &lower)
 {
@@ -53,18 +65,18 @@ void getUpperLowerValues(vector<vector<int>> land, int average, int &upper, int 
         }
 }
 Result Flattening(vector<vector<int>> land, int B, int average, int upper, int lower)
+
 {
     Result result;
+    result.time = 0;
     getUpperLowerValues(land, average, upper, lower);
-
     if (B < lower)
     {
-        cout << average << endl;
         int tmp = lower - B;
         if (tmp > upper)
         {
-            cout << "called" << endl;
-            return Flattening(land, B, average - 1, upper, lower);
+            Result a;
+            return a;
         }
         else
         {
